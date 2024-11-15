@@ -39,11 +39,11 @@ height = 400
 offset = 300
 
 smoothRadius, squareSize, defaultRadius ,gravity, collisionDamping, targetDensity, pressureMultiplier :: Float
-defaultRadius = 10
+defaultRadius = 1
 smoothRadius = 25
 squareSize = 5
-gravity = 0 
--- gravity = -981
+-- gravity = 0 
+gravity = -981
 collisionDamping = 0.2
 targetDensity = 3.926795e-6
 pressureMultiplier = 10000000
@@ -86,13 +86,13 @@ applyBoardCollision :: Particle -> Particle
 applyBoardCollision p = p {pos = (x,y), vel = (vx',vy')}
     where (vx,vy) = vel p
           (x,y) = pos p
-          vy'| abs y > abs (fromIntegral height / 2) - defaultRadius  = vy * (-1) * collisionDamping
+          vy'| abs y >= abs (fromIntegral height / 2) - defaultRadius  = vy * (-1) * collisionDamping
              | otherwise = vy
-          vx'| abs x > abs (fromIntegral width / 2) - defaultRadius = vx * (-1) * collisionDamping
+          vx'| abs x >= abs (fromIntegral width / 2) - defaultRadius = vx * (-1) * collisionDamping
              | otherwise = vx
-          x' | abs x > abs (fromIntegral width / 2) - defaultRadius = sign x * ((fromIntegral width / 2) - defaultRadius - 10)
+          x' | abs x >= abs (fromIntegral width / 2) - defaultRadius = sign x * ((fromIntegral width / 2) - defaultRadius - 10)
              | otherwise = x
-          y' | abs y > abs ((fromIntegral height / 2) - defaultRadius) = sign y * ((fromIntegral height / 2) - defaultRadius - 10)
+          y' | abs y >= abs ((fromIntegral height / 2) - defaultRadius) = sign y * ((fromIntegral height / 2) - defaultRadius - 10)
              | otherwise = y
 
 sign :: Float -> Float
@@ -129,18 +129,14 @@ updateDensity state p = p {density = density'}
 
 applyPressure :: Float -> GameState -> Particle -> Particle
 applyPressure dt state p = p {vel = (vx',vy')}
-  where (x,y) = pos p
-        -- (vx',vy') = customSum [(x,y) ,customMult pressureAcceleration dt]
+  where (vx,vy) = vel p
         (vx',vy') 
-          | density p == 0 = vel p
-          | otherwise = customMult pressureAcceleration dt
-        pressureAcceleration = customMult (calculatePressureForce p state) (1 / density p)
-        -- limit:: Point -> Point
-        -- limit (x1,y1)
-        --   | x1 > 100 && y1 > 100 = (100,100)
-        --   | x1 < 100 && y1 > 100 = (x1,100)
-        --   | x1 > 100 && y1 < 100 = (100,y1)
-        --   | x1 < 100 && y1 < 100 = (x1,y1)
+          | density p < 0.00000001 = (0,0)
+          -- | otherwise = customSum [(vx,vy) ,customMult pressureAcceleration dt]
+          | otherwise = (sign ax * min 100 (abs (ax * dt)),sign ay * min 100 (abs (ay * dt)))
+        (ax,ay) = customMult (calculatePressureForce p state) (1 / density p)
+        -- pressureAcceleration = customMult (calculatePressureForce p state) (1 / density p)
+        sign n = abs n / n
 
 convertDensityToPressure :: Float -> Float
 convertDensityToPressure _density = pressure
@@ -150,11 +146,12 @@ convertDensityToPressure _density = pressure
 calculatePressureForce :: Particle -> GameState -> Point
 calculatePressureForce p state = pressureForce
   where (x1,y1) = pos p
-        pressureForce = customSum [ dir (pos otherP) `customMult` (pressure otherP * slope otherP * mass otherP / getDensity otherP) | otherP <- particles state,
+        pressureForce = customSum [ dir (pos otherP) (id otherP) `customMult` (pressure otherP * slope otherP * mass otherP / getDensity otherP) | otherP <- particles state,
                                                                    id otherP /= id p && distance (pos otherP) < smoothRadius]
-        dir (x,y) 
+        dir :: Point -> Float -> Point
+        dir (x,y) _id
           -- | distance (x,y) < 1 = (1,1)
-          | distance (x,y) < 1 = head $ randomPoints state
+          | distance (x,y) < 0.05 = randomPoints state !! (fromEnum _id `mod` 4)
           -- | otherwise = (x - x1, y - y1) 
           | otherwise = customMult (x - x1, y - y1) ( 1/ distance (x,y))
         slope localP
@@ -171,7 +168,7 @@ calculatePressureForce p state = pressureForce
 --Main Loop Components
 drawParticle :: Particle -> Picture
 drawParticle p = pictures [
-    translate x y $ color (particleColor p) $ circleSolid (radius p),
+    translate x y $ color (light $ light $ particleColor p) $ circleSolid (radius p),
     translate x y $ color (makeColor 0.0078 0.5882 1 0.5) $ circleSolid smoothRadius]
   where (x,y) = pos p
 
@@ -185,7 +182,7 @@ drawDensity (Density (x,y) k) = translate x y $ color (makeColor r g b a) $ rect
 
 initialState :: IO GameState
 initialState = do
-  p <- randomParticles 1
+  p <- randomParticles 10
   -- let p = evenlySpacedParticles 15
   let pixx = fromIntegral width
   let pixy = fromIntegral height
@@ -193,7 +190,7 @@ initialState = do
   -- let d = [ Density (-300 + (i * 25), -200 + (j * 25)) 0| i <- [1..15],j <- [1..15]]
   let d = [ Density (pos x) 0| x <- p]
   
-  return GameState { particles = p, densities = d, randomPoints = [(1,1),(1,-1),(-1,1),(-1,-1)]}
+  return GameState { particles = p, densities = d, randomPoints = [(1,0.1),(1,-1),(-1,1),(-1,-1)]}
 
 render :: GameState -> Picture
 render state = Pictures $ map drawDensity (densities state) ++ map drawParticle (particles state)
@@ -238,22 +235,25 @@ handleEvent (EventKey (Char 'a') Down _ _) state  =
   in state { particles = ps }
 
 handleEvent (EventKey (Char 'f') Down _ mousePos) state = unsafePerformIO $ do
-    -- print [customMult (calculatePressureForce p state) (1 / density p)| p <- particles state]
-    print [density p| p <- particles state]
-    -- print [pos p| p <- particles state]
+    print [customMult (calculatePressureForce p state) (1 / density p)| p <- init $ particles state]
+    print [vel p| p <- particles state]
     return state { particles = particles state}
 
-handleEvent (EventKey (Char 'n') Down _ mousePos) state = state { particles = Particle mousePos (0, 0) 1 defaultRadius 0 0 ((id $ last $ particles state) + 1.0) black :particles state}
+handleEvent (EventKey (Char 'n') Down _ mousePos) state = state { particles = Particle mousePos (0, 0) 1 defaultRadius 0 0 ((fromIntegral $ length $ particles state) + 1.0) black :particles state}
 
 handleEvent (EventKey (MouseButton LeftButton) Down _ mousePos) state = unsafePerformIO $ do 
     let newPs = changeColor mousePos red (particles state)
     -- let distance (x,y) (x1,y1)= sqrt ((x - x1) * (x - x1) + (y - y1) * (y - y1))
     -- print $ (pos $ closestParticle mousePos (particles state)) 
     -- print $ smoothingKernel (distance (pos $ closestParticle mousePos (particles state)) (pos $ head $ particles state)) smoothRadius
-    print $ density (closestParticle mousePos (particles state)) 
+    -- print $ density (closestParticle mousePos (particles state)) 
     -- print $ convertDensityToPressure $ density (closestParticle mousePos (particles state)) 
-    print $ calculatePressureForce (closestParticle mousePos (particles state)) state
-    print $ vel (closestParticle mousePos (particles state)) 
+    -- print $ calculatePressureForce (closestParticle mousePos (particles state)) state
+    -- print $ vel (closestParticle mousePos (particles state)) 
+    let p = closestParticle mousePos (particles state)
+    
+    print $ applyPressure2 (1/60) state p
+
     print ""
     return state { particles = newPs}
 
@@ -264,6 +264,17 @@ handleEvent (EventKey (MouseButton LeftButton) up _ mousePos) state = unsafePerf
 handleEvent  _ state = state
 
 --End events
+
+applyPressure2 :: Float -> GameState -> Particle -> Point
+applyPressure2 dt state p = (density p, 0)
+  where (vx,vy) = vel p
+        (vx',vy') 
+          | density p < 0.00000001 = (0,0)
+          -- | otherwise = customSum [(vx,vy) ,customMult pressureAcceleration dt]
+          | otherwise = (sign ax * min 100 (abs (ax * dt)),sign ay * min 100 (abs (ay * dt)))
+        (ax,ay) = customMult (calculatePressureForce p state) (1 / density p)
+        -- pressureAcceleration = customMult (calculatePressureForce p state) (1 / density p)
+        sign n = abs n / n
 
 changeColor :: Point -> Color -> [Particle] -> [Particle]
 changeColor _ c [p] = [p {particleColor = c}]
@@ -276,7 +287,7 @@ changeColor (x1,y1) c (p:ps)
 closestParticle :: Point -> [Particle] -> Particle
 closestParticle _ [p] = p
 closestParticle (x1,y1) (p:ps) 
-  | x1 >= x - defaultRadius && x1 <= x + defaultRadius && y1 >= y - defaultRadius && y1 <= y + defaultRadius = p
+  | x1 >= x - smoothRadius  && x1 <= x + smoothRadius  && y1 >= y - smoothRadius  && y1 <= y + smoothRadius  = p
   | otherwise = closestParticle (x1,y1) ps
   where (x,y) = pos p
 

@@ -23,7 +23,7 @@ initialParticle = do
   --y <- randomRIO (-fromIntegral height / 2, fromIntegral height / 2)
   -- vx <- randomRIO (-50, 50)  -- Random velocity
   -- vy <- randomRIO (-50, 50)  -- Random velocity
-  return $ Particle (x, 180) (0, 0) 50 0
+  return $ Particle (x, 180) (0, 100) 50 0
 
 numParticles :: Int
 numParticles = 2
