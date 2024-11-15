@@ -56,7 +56,7 @@ common warnings
 
 executable haskell-animation
     -- Import common warning flags.
-    import:           warnings
+    -- import:           warnings
 
     -- .hs or .lhs file containing the Main module.
     main-is:          Main2.hs
