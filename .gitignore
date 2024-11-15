@@ -1,0 +1,7 @@
+# Ignore everything in the "a" directory
+dist-newstyle/
+local/
+
+# Ignore the "b" file
+SandSimulation.hs
+
