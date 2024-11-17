@@ -9,8 +9,22 @@ type Vector2D a = V.Vector [a]
 type Velocity = (Float, Float)
 type ID = Float
 
+data GameState = GameState
+  { particles :: Vector2D Particle,
+    randomPoints :: [Point],
+    pause :: Bool,
+    generateParticles :: Bool,
+    mousePos :: Point,
+    showGrid :: Bool,
+    gravity :: Float,
+    isPullInteraction :: Bool,
+    isPushInteraction :: Bool,
+    addColor :: Bool
+  }
+
 data Particle = Particle
   { pos :: Point,
+    predPos :: Point,
     vel :: Velocity,
     mass :: Float,
     radius :: Float,
@@ -21,12 +35,8 @@ data Particle = Particle
   }
 
 instance Show Particle where
-    show (Particle (x,y) _ _ _ _ _ _ _) = show (x,y)
+    show (Particle (x,y) _ _ _ _ _ _ _ _) = show (x,y)
 
-data Density = Density{
-  densityPos:: Point,
-  value :: Float
-}
 
 --functions for 2D Vector
 vector2DToList :: Vector2D a -> [a]
@@ -43,12 +53,12 @@ map2D :: (a -> b) -> Vector2D a -> Vector2D b
 map2D f = V.map (map f)
 
 length2D :: Vector2D a -> Int
-length2D = V.foldl' addRowLength 0
-    where addRowLength currSum row = currSum + length row
+length2D = V.sum . V.map length
+
 
 addElementToRow :: Int -> a -> Vector2D a -> Vector2D a
 addElementToRow i newElem grid
-    | i > V.length grid || i < 0 = V.update grid (V.singleton (0, newRow 0))
+    | i >= V.length grid || i < 0 = V.update grid (V.singleton (0, newRow 0))
     | otherwise = V.update grid (V.singleton (i, newRow i))
     where
         newRow localI = newElem : grid V.! localI
