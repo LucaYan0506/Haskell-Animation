@@ -5,7 +5,7 @@
 This project demonstrates a **2D fluid simulation** using **Smoothed Particle Hydrodynamics (SPH)**, implemented in Haskell. The simulation visualizes fluid dynamics, providing insight into the movement, pressure, and velocity of particles in real-time. Designed for both scientific exploration and aesthetic appeal, the simulation also includes interactive features to manipulate the behavior of the particles dynamically.
 
 ## Viewing the Output
-The output video of the simulation can be viewed on [YouTube](https://youtu.be/LiqdPfCDhqo) or by opening the output.mp4 file generated during the simulation.
+The output video of the simulation can be viewed on [YouTube](https://youtu.be/LiqdPfCDhqo) or by opening the output.mp4 file
 
 ---
 
