@@ -4,6 +4,9 @@
 
 This project demonstrates a **2D fluid simulation** using **Smoothed Particle Hydrodynamics (SPH)**, implemented in Haskell. The simulation visualizes fluid dynamics, providing insight into the movement, pressure, and velocity of particles in real-time. Designed for both scientific exploration and aesthetic appeal, the simulation also includes interactive features to manipulate the behavior of the particles dynamically.
 
+## Viewing the Output
+The output video of the simulation can be viewed on [YouTube](https://youtu.be/LiqdPfCDhqo) or by opening the output.mp4 file generated during the simulation.
+
 ---
 
 ## Features
@@ -37,6 +40,7 @@ This project demonstrates a **2D fluid simulation** using **Smoothed Particle Hy
    cabal run
    ```
 
+
 ## Technical Details
 
 ### **Particle Interaction**
@@ -65,14 +69,6 @@ To optimize the performance of the fluid simulation, particles are stored in a `
 - **Efficient Access**: Using `Data.Vector` allows for constant-time access to particles based on their index, making it much faster to retrieve particles for density and pressure calculations compared to iterating through all particles.
 
 - **Localized Neighbor Search**: to calculate properties like pressure and density, we only need to check particles in close proximity to the current particle. This is achieved by checking the "boxes" (or hash values) surrounding the particle. Since particles are indexed by their hashed positions, we can quickly access a small subset of nearby particles, significantly reducing computational complexity. By limiting the neighborhood check to only the surrounding boxes, we ensure that only particles within the smoothing radius—the relevant range—are considered, thus optimizing performance and avoiding unnecessary calculations.
-
-
-
-### Fluid Simulation
-
-The fluid simulation is based on particle-based methods, where each particle represents a small portion of the fluid. The simulation computes forces such as pressure, gravity, and external forces based on the density calculated from the kernel function.
-
-
 
 ### **Control Mechanics**
 - **Push/Pull Mechanics**: Particle forces depend on pointer proximity and mouse input.

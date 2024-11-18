@@ -287,7 +287,7 @@ drawGrid (x,y) = translate x y $ color white $ rectangleWire squareSize squareSi
 
 initialState :: IO GameState
 initialState = do
-  p <- randomParticles 600
+  p <- randomParticles 100
   let pixx = fromIntegral width
   let pixy = fromIntegral height
   let x = 10
