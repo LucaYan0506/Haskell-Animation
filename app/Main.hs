@@ -276,10 +276,13 @@ updateGrid grid = putParticleToGrid (vector2DToList grid) newGrid
 -- ================== Main Loop Components ====================
 -- ============================================================
 
-drawParticle :: Particle -> Picture
-drawParticle p = pictures [
+drawParticle :: GameState -> Particle -> Picture
+drawParticle state p 
+  | showGrid state = pictures [
+    translate x y $ color (particleColor p) $ circleSolid (radius p),
+    translate x y $ color (makeColor 0.0078 0.5882 1 0.5) $ circleSolid smoothRadius]
+  | otherwise = pictures [
     translate x y $ color (particleColor p) $ circleSolid (radius p)]
-    -- translate x y $ color (makeColor 0.0078 0.5882 1 0.5) $ circleSolid smoothRadius]
   where (x,y) = pos p
 
 drawGrid :: Point -> Picture
@@ -306,9 +309,9 @@ initialState = do
 render :: GameState -> Picture
 render state
     | showGrid state = Pictures $ [drawGrid (x,y) | x <- [-n + cellSize,-n + 3 * cellSize..n - cellSize], y <- [-m + cellSize,-m + 3 * cellSize..m - cellSize]]
-                       ++ vector2DToList (map2D drawParticle (particles state))
+                       ++ vector2DToList (map2D (drawParticle state) (particles state))
                        ++ [translate mousePosX mousePosY $ color red $ circle interactionForceRadius]
-    | otherwise = Pictures $ vector2DToList (map2D drawParticle (particles state))
+    | otherwise = Pictures $ vector2DToList (map2D (drawParticle state) (particles state))
   where n = fromIntegral width / 2
         m = fromIntegral height / 2
         cellSize = squareSize / 2
