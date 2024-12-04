@@ -25,9 +25,11 @@ The output video of the simulation can be viewed on [YouTube](https://youtu.be/L
 | **Mouse Right Button (Hold)**  | Push particles **towards** the pointer.                                                    |
 | **Key `p`**               | Apply a force that **stops all movement** (particles remain static but density increases).    |
 | **Space Bar (Hold)**       | **Generate new particles** at the pointer's location.                                          |
-| **Shift + `g` (Hold)**     | Developer Mode: Display a **2D grid** and a **circle** around the pointer (interaction range). |
+| **Key `n`**                | **Generate a new particle** at the pointer's location.                                          |
+| **Shift + `g`**     | Developer Mode: Display a **2D grid** and a **circle** around the pointer (interaction range). |
 | **Key `c`**               | Change particle colors to represent **velocity** (helps visualize waves and motion patterns). |
 | **Key `g`**               | Toggle **gravity** on or off.                                                                 |
+| **Key `w`**               | Toggle **smooth particle** on or off.                                                                 |
 
 ---
 

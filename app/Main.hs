@@ -278,9 +278,9 @@ updateGrid grid = putParticleToGrid (vector2DToList grid) newGrid
 
 drawParticle :: GameState -> Particle -> Picture
 drawParticle state p 
-  | showGrid state = pictures [
+  | showWater state = pictures [
     translate x y $ color (particleColor p) $ circleSolid (radius p),
-    translate x y $ color (makeColor 0.0078 0.5882 1 0.5) $ circleSolid smoothRadius]
+    translate x y $ color (makeColor 0.0078 0.5882 1 0.5) $ circleSolid 10]
   | otherwise = pictures [
     translate x y $ color (particleColor p) $ circleSolid (radius p)]
   where (x,y) = pos p
@@ -300,6 +300,7 @@ initialState = do
                      generateParticles = False, 
                      mousePos = (0,0), 
                      showGrid = False, 
+                     showWater = False, 
                      gravity = 0, 
                      isPullInteraction = False, 
                      isPushInteraction = False,
@@ -383,8 +384,16 @@ handleEvent (EventMotion _mousePos) state = state {mousePos = _mousePos}
 handleEvent (EventKey (SpecialKey KeySpace) Down _ _) state = state { generateParticles = True }
 handleEvent (EventKey (SpecialKey KeySpace) Up _ _) state = state { generateParticles = False }
 
-handleEvent (EventKey (Char 'G') Down _ _) state = state { showGrid = True }
-handleEvent (EventKey (Char 'G') Up _ _) state = state { showGrid = False }
+handleEvent (EventKey (SpecialKey KeyDelete) Down _ _) state = state { particles = newGrid }
+  where newGrid = emptyVector2DWithNRow (round ((fromIntegral width / squareSize) * (fromIntegral height/ squareSize)))
+
+handleEvent (EventKey (Char 'n') Down _ _mousePos) state = state { particles = addElementToRow 0 newParticle (particles state)}
+  where newParticle = Particle (mousePos state) (mousePos state) (0, 0) 1 defaultRadius 0 0 ((fromIntegral $ length2D $ particles state) + 1.0) defaultParticleColor
+
+
+handleEvent (EventKey (Char 'G') Down _ _) state = state { showGrid = not $ showGrid state}
+
+handleEvent (EventKey (Char 'w') Down _ _) state = state { showWater = not $ showWater state }
 
 handleEvent (EventKey (Char 'c') Down _ _) state 
   | addColor state = state { addColor = False, particles = newPs }
