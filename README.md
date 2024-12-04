@@ -6,7 +6,7 @@ This project demonstrates a **2D fluid simulation** using **Smoothed Particle Hy
 
 ## Viewing the Output  
 The output video of the simulation can be viewed on [YouTube](https://youtu.be/LiqdPfCDhqo) or by opening the output.mp4 file.  
-**Windows users**: You can download the executable file and run the simulation directly without needing to set up the Haskell environment. Download the .exe file [here](https://github.com/LucaYan0506/Haskell-Animation/releases/download/V.1.0.1/installer.exe).
+**Windows users**: You can download the executable file and run the simulation directly without needing to set up the Haskell environment. Download the .exe file [here](https://github.com/LucaYan0506/Haskell-Animation/releases/download/V.1.0.1/installer.exe).  
 **Apple users**: You can download the executable file and run the simulation directly without needing to set up the Haskell environment. Download the .exe file [here](https://github.com/LucaYan0506/Haskell-Animation/releases/download/V.1.0.1.Mac/haskell-animation).
 
 ---
