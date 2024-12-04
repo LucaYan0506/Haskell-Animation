@@ -16,6 +16,7 @@ data GameState = GameState
     generateParticles :: Bool,
     mousePos :: Point,
     showGrid :: Bool,
+    showWater :: Bool,
     gravity :: Float,
     isPullInteraction :: Bool,
     isPushInteraction :: Bool,
@@ -70,3 +71,8 @@ getNList i vec2D
 
 emptyVector2DWithNRow :: Int ->  Vector2D a
 emptyVector2DWithNRow n = V.replicate n []
+
+removeLastElement :: Vector2D a -> Vector2D a
+removeLastElement vec2D
+    | V.null vec2D = error "Cannot remove the last element of an empty vector"
+    | otherwise  = list2DToVector2D [init $ vector2DToList vec2D]
