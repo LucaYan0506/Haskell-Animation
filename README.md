@@ -30,6 +30,7 @@ The output video of the simulation can be viewed on [YouTube](https://youtu.be/L
 | **Key `c`**               | Change particle colors to represent **velocity** (helps visualize waves and motion patterns). |
 | **Key `g`**               | Toggle **gravity** on or off.                                                                 |
 | **Key `w`**               | Toggle **smooth particle** on or off.                                                                 |
+| **Del Key**               | **Remove** every partcle.                                                                 |
 
 ---
 
