@@ -9,7 +9,7 @@ The output video of the simulation can be viewed on [YouTube](https://youtu.be/L
   
 **Windows users**: You can download the executable file and run the simulation directly without needing to set up the Haskell environment. Download the .exe file [here](https://github.com/LucaYan0506/Haskell-Animation/releases/download/V.1.0.1/installer.exe).  
 **Apple users**: You can download the executable file and run the simulation directly without needing to set up the Haskell environment. Download the .exe file [here](https://github.com/LucaYan0506/Haskell-Animation/releases/download/V.1.0.1.Mac/haskell-animation).  
-**Linux users**: You can download the executable file and run the simulation directly without needing to set up the Haskell environment. Download the .exe file [here](https://github.com/LucaYan0506/Haskell-Animation/releases/download/v1.0.1.ubuntu/haskell-animation) (only tested on Ubuntu 24.04.1).
+**Linux users**: You can download the executable file and run the simulation directly without needing to set up the Haskell environment. Download the .exe file [here](https://github.com/LucaYan0506/Haskell-Animation/releases/download/v1.0.1.ubuntu/haskell-animation) (only tested on Ubuntu 24.04.1 and ,once you downloaded the file, you need to run the following command `chmod +x haskell-animation`).
 
 ---
 
