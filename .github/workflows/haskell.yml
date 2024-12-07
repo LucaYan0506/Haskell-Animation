@@ -19,8 +19,14 @@ jobs:
         cabal update
         cabal build
 
+    - name: Create macOS App Bundle
+      run: |
+        mkdir -p fluidSimulation.app/Contents/MacOS
+        cp dist-newstyle/build/*/*/*/*/*/build/haskell-animation/haskell-animation fluidSimulation.app/Contents/MacOS/haskell-animation
+        chmod +x fluidSimulation.app/Contents/MacOS/haskell-animation
+
     - name: Upload Executable
       uses: actions/upload-artifact@v3
       with:
         name: haskell-animation
-        path: dist-newstyle/build/*/*/*/*/*/build/haskell-animation/haskell-animation
+        path: fluidSimulation.app
