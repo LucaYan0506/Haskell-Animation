@@ -23,4 +23,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: haskell-animation
-        path: dist-newstyle/build/*/*/*/*/*/build/*
+        path: dist-newstyle/build/*/*/*/*/*/build/haskell-animation/haskell-animation
