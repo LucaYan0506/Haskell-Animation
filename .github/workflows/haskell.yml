@@ -1,0 +1,27 @@
+name: MacOs Build
+
+on: 
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-haskell@v1
+      with:
+        ghc-version: '8.10.7'
+        cabal-version: '3.4'
+
+    - name: Build the project
+      run: |
+        cabal update
+        cabal build
+
+    - name: Upload Executable
+      uses: actions/upload-artifact@v3
+      with:
+        name: haskell-animation
+        path: dist-newstyle/build/*/*/*/*/*/build/*
